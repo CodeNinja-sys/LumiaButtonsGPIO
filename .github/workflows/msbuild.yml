@@ -28,14 +28,13 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
     
       - name: Install Windows SDK
         uses: microsoft/setup-msbuild@v1.0.2
         with:
           vs-version: '16.0'
-          include-prerelease: true
-          sdk: '10.0.18362.0'
+          windows-sdk-version: '10.0.18362.0'
 
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.0.2

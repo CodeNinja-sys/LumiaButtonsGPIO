@@ -34,10 +34,27 @@ jobs:
         uses: microsoft/setup-msbuild@v1.0.2
         with:
           vs-version: '16.0'
-          windows-sdk-version: '10.0.18362.0'
+          vswhere-path: 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe'
 
+      - name: Find Windows SDK version
+        id: find-sdk-version
+        run: |
+          sdkVersion=$(C:/ProgramData/Chocolatey/bin/vswhere.exe -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationpath | Out-String).Trim()
+          echo "::set-output name=sdk-version::$sdkVersion"
+          
+      - name: Add Windows SDK to PATH
+        run: |
+          # Get the Windows SDK installation path from the previous step
+          $sdkPath = "${{ steps.find-sdk-version.outputs.sdk-version }}\\bin"
+          echo "Adding $sdkPath to PATH"
+          # Add the Windows SDK to the PATH environment variable
+          $env:Path = "$sdkPath;$env:Path"
+      
       - name: Add MSBuild to PATH
-        uses: microsoft/setup-msbuild@v1.0.2
+        run: |
+          echo "Adding MSBuild to PATH"
+          # Add MSBuild to the PATH environment variable
+          $env:Path = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin;$env:Path"
       
       - name: Build
         working-directory: ./contrib
